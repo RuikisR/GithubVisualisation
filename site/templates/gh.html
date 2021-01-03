@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
 </head>
 <body>
-    <h1>My Web Page</h1>
+    <h1>Github Commit Visualiser</h1>
 
     <div id="search">
         <form>
@@ -18,17 +18,24 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
     </script>
 
+    {% if data %}
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart']});
         google.charts.setOnLoadCallback(drawChart);
 
         function drawChart() {
-          var data = google.visualization.arrayToDataTable({{data}});
-          var options = {'title':"{{title}}", 'width':550, 'height':400};
+          var data = google.visualization.arrayToDataTable(
+            [ ["Repository", "Commits"],
+              {% for key, value in data.items() %}
+              ["{{key}}", {{value}}],
+              {% endfor %}
+            ]);
+          var options = {'title':"{{title}}", 'width':1200, 'height':800};
           var chart = new google.visualization.BarChart(document.getElementById('barchart'));
           chart.draw(data, options);
         }
     </script>
+    {% endif %}
 
 </body>
 </html>

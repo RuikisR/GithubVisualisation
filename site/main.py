@@ -9,12 +9,27 @@ g = Github()
 def root():
     search = request.args.get('uname')
     if search is None:
-        title = "Yeet"
+        title = ""
+        data = None
     else:
-        title = f"Data for {search}"
-    data = ""
+        title = f"Commit data for {search}"
+        data = get_data(search)
     return render_template('gh.html', data=data, title=title)
 
 
+def get_data(search):
+    data = None
+    try:
+        user = g.get_user(search)
+        repos = user.get_repos()
+        data = {}
+        for repo in repos:
+            commits = repo.get_commits(author=user).totalCount
+            data[repo.name] = commits
+    except Exception as e:
+        print(e)
+    return data
+
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=False, host='0.0.0.0')
